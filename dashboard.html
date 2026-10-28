@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="section-kicker">YOUR WORKSPACE</div><h1>Dashboard</h1><p class="muted">Manage your files, partitions, and secure access.</p></div><a class="btn primary" href="{{ url_for('upload') }}">＋ Upload a file</a></div>
+<div class="stats-grid">
+<div class="stat-card"><span class="stat-label">YOUR FILES</span><strong>{{ files|length }}</strong><small>Uploaded files</small></div>
+<div class="stat-card"><span class="stat-label">TOTAL PARTITIONS</span><strong>{{ total_parts }}</strong><small>Encrypted chunks</small></div>
+<div class="stat-card"><span class="stat-label">STORED DATA</span><strong>{{ "%.2f"|format(total_bytes / 1048576) }} MB</strong><small>Original file sizes</small></div>
+<div class="stat-card"><span class="stat-label">PENDING REQUESTS</span><strong>{{ pending }}</strong><small>Awaiting approval</small></div>
+</div>
+<section class="panel">
+<div class="panel-heading"><div><h2>Your files</h2><p class="muted">Encrypted files uploaded to your account.</p></div><a class="text-link" href="{{ url_for('search') }}">Search files →</a></div>
+{% if files %}
+<div class="table-wrap"><table><thead><tr><th>FILE</th><th>SIZE</th><th>PARTITIONS</th><th>UPLOADED</th><th></th></tr></thead><tbody>
+{% for file in files %}<tr><td><div class="file-cell"><span class="mini-file">▤</span><div><strong>{{ file.original_name }}</strong><small>SHA-256 verified on download</small></div></div></td><td>{{ "%.1f"|format(file.size_bytes / 1024) }} KB</td><td><span class="count-pill">{{ file.partition_count }}</span></td><td>{{ file.created_at.strftime("%d %b %Y") }}</td><td><a class="row-link" href="{{ url_for('file_detail', file_id=file.id) }}">Details →</a></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty-state"><div class="empty-icon">▤</div><h3>No files yet</h3><p>Upload your first file to see partitioning and encryption in action.</p><a class="btn primary" href="{{ url_for('upload') }}">Upload your first file</a></div>{% endif %}
+</section>
+{% endblock %}

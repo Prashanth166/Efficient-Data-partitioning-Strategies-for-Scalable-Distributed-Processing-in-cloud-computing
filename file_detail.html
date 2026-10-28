@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}File details{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="section-kicker">FILE DETAILS</div><h1>{{ record.original_name }}</h1><p class="muted">Uploaded {{ record.created_at.strftime("%d %B %Y at %H:%M") }} UTC</p></div><a class="btn secondary" href="{{ url_for('dashboard') }}">← Dashboard</a></div>
+<div class="stats-grid three"><div class="stat-card"><span class="stat-label">ORIGINAL SIZE</span><strong>{{ "%.2f"|format(record.size_bytes / 1024) }} KB</strong></div><div class="stat-card"><span class="stat-label">PARTITIONS</span><strong>{{ record.partition_count }}</strong></div><div class="stat-card"><span class="stat-label">ENCRYPTION</span><strong class="green-text">Enabled</strong></div></div>
+<section class="panel"><div class="panel-heading"><div><h2>Integrity fingerprint</h2><p class="muted">SHA-256 hash of the original file.</p></div></div><code class="hash-value">{{ record.sha256 }}</code></section>
+<section class="panel"><div class="panel-heading"><div><h2>Partition records</h2><p class="muted">Encrypted chunk metadata. Raw encrypted files are not exposed.</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>PARTITION SLOT</th><th>CHUNK DIGEST</th><th>ENCRYPTED SIZE</th></tr></thead><tbody>{% for part in record.partitions|sort(attribute='id') %}<tr><td><span class="count-pill">Part {{ part.partition_index + 1 }}</span></td><td><code>{{ part.digest[:24] }}…</code></td><td>{{ part.encrypted_size }} bytes</td></tr>{% endfor %}</tbody></table></div></section>
+<section class="panel"><div class="panel-heading"><div><h2>Decryption access</h2><p class="muted">An administrator must approve your request before download.</p></div></div>
+{% if current_user.is_admin %}<p class="muted">Administrator accounts can download files they own without an approval request.</p><a class="btn primary" href="{{ url_for('download', file_id=record.id) }}">Decrypt & download</a>
+{% else %}
+<form method="post" action="{{ url_for('request_key', file_id=record.id) }}"><button class="btn primary" type="submit">Request decryption access</button></form>
+{% set approved = record.key_requests|selectattr('requester_id', 'equalto', current_user.id)|selectattr('status', 'equalto', 'approved')|list %}
+{% set pending_req = record.key_requests|selectattr('requester_id', 'equalto', current_user.id)|selectattr('status', 'equalto', 'pending')|list %}
+{% if approved %}<p class="status-message success">Your request is approved. <a href="{{ url_for('download', file_id=record.id) }}">Download decrypted file →</a></p>{% elif pending_req %}<p class="status-message">Your request is pending administrator review.</p>{% endif %}
+{% endif %}
+</section>
+{% endblock %}

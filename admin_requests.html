@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Key requests{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="section-kicker">ADMINISTRATION</div><h1>Decryption access requests</h1><p class="muted">Review and approve requests from users.</p></div></div>
+<section class="panel"><div class="panel-heading"><div><h2>All requests</h2><p class="muted">Only approve requests you have verified.</p></div></div>
+{% if requests_list %}<div class="table-wrap"><table><thead><tr><th>REQUESTER</th><th>FILE</th><th>REQUESTED</th><th>STATUS</th><th>ACTION</th></tr></thead><tbody>
+{% for item in requests_list %}<tr><td>{{ item.requester.username }}</td><td>{{ item.stored_file.original_name }}</td><td>{{ item.created_at.strftime("%d %b %Y") }}</td><td><span class="status-pill {{ item.status }}">{{ item.status }}</span></td><td>{% if item.status == 'pending' %}<div class="action-pair"><form method="post" action="{{ url_for('review_request', request_id=item.id, decision='approve') }}"><button class="small-btn approve" type="submit" data-confirm="Approve this request?">Approve</button></form><form method="post" action="{{ url_for('review_request', request_id=item.id, decision='reject') }}"><button class="small-btn reject" type="submit" data-confirm="Reject this request?">Reject</button></form></div>{% else %}—{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<div class="empty-state"><h3>No requests</h3><p>Key requests will appear here.</p></div>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Create account{% endblock %}
+{% block content %}
+<div class="auth-wrap"><section class="auth-card"><div class="auth-symbol">S</div><div class="section-kicker">CREATE YOUR ACCOUNT</div><h1>Get started</h1><p class="muted">Create an account to upload and manage files.</p>
+<form method="post" class="form-stack">
+<label>Username<input name="username" minlength="3" maxlength="80" autocomplete="username" required></label>
+<label>Password<input type="password" name="password" minlength="8" autocomplete="new-password" required><small>Use at least 8 characters.</small></label>
+<button class="btn primary full" type="submit">Create account <span>→</span></button>
+</form><p class="auth-switch">Already registered? <a href="{{ url_for('login') }}">Log in</a></p></section></div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Upload file{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="section-kicker">DATA INGESTION</div><h1>Upload a file</h1><p class="muted">Your file will be partitioned and encrypted before storage.</p></div></div>
+<div class="upload-layout"><section class="panel upload-panel"><form method="post" enctype="multipart/form-data" class="form-stack">
+<label class="drop-zone" for="file-input"><span class="upload-icon">↑</span><strong>Choose a file to upload</strong><span class="muted">Click to browse your computer · Maximum 20 MB</span><input id="file-input" type="file" name="file" required><span id="selected-file" class="selected-file">No file selected</span></label>
+<label>Chunk size<select name="chunk_size"><option value="16384">16 KB — more partitions</option><option value="65536" selected>64 KB — balanced default</option><option value="262144">256 KB — fewer partitions</option><option value="1048576">1 MB — large chunks</option></select><small>Each chunk is encrypted separately. The number of chunks depends on file size and this setting.</small></label>
+<button class="btn primary full" type="submit">Upload, partition & encrypt <span>→</span></button>
+</form></section><aside class="info-panel"><div class="info-icon">⌑</div><h3>What happens next?</h3><ol><li><strong>Read & split</strong><span>The file is split into chunks of your selected size.</span></li><li><strong>Hash & encrypt</strong><span>Each chunk gets a SHA-256 digest and is encrypted.</span></li><li><strong>Store metadata</strong><span>Partition information is saved in the database.</span></li><li><strong>Request access</strong><span>Request administrator approval before downloading.</span></li></ol></aside></div>
+{% endblock %}
